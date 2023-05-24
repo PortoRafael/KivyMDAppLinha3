@@ -17,6 +17,8 @@ from kivy.core.window import Window
 from kivy.graphics import Line
 from datetime import datetime
 from kivy.properties import ObjectProperty
+from kivymd.uix.dialog import MDDialog
+
 
 class Window_App(MDApp):
   def build(self):
@@ -91,8 +93,6 @@ class Checks_Turno(MDGridLayout):
     self.rows = 1 
     self.cols  = 11
 
-
-    
     self.add_widget(MDLabel(text = 'Turno: ', width = 5))
     
     for turno in ['A','B','C','D','ADM']:
@@ -179,6 +179,25 @@ class Confirm_Button(MDRaisedButton):
     self.text = "Confirma"
     self.size = 100, 50
     self.line_color = "black"
+
+class Confirm_Dialog(MDDialog):
+  def __init__(self,**kwargs):
+    super().__init__(**kwargs)
+
+    msg = (f'''
+    Deseja realmente fazer o seguinte reporte?
+    Data: {fechamento['Data']}
+    Responsável: {fechamento['Responsável']}
+    Turno: {fechamento['Turno']}
+    Material: {fechamento['Material']}
+    Entrada: {fechamento['Entrada']}
+    Baia I: {fechamento['Baia I']}
+    Baia II: {fechamento['Baia II']}
+    Baia III: {fechamento['Baia III']}
+    Baia IV: {fechamento['Baia IV']}
+    ''')
+      
+    self.text = msg
 
 
 def confirm():
