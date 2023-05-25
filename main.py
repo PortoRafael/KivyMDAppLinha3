@@ -9,6 +9,7 @@ from kivymd.uix.screen import MDScreen
 from kivymd.uix.button import MDFloatingActionButton
 from kivymd.uix.button import MDRectangleFlatIconButton
 from kivymd.uix.button import MDRaisedButton
+from kivymd.uix.button import MDFlatButton
 from kivymd.uix.dropdownitem import MDDropDownItem
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.selectioncontrol import MDCheckbox
@@ -180,27 +181,9 @@ class Confirm_Button(MDRaisedButton):
     self.size = 100, 50
     self.line_color = "black"
 
-class Confirm_Dialog(MDDialog):
-  def __init__(self,**kwargs):
-    super().__init__(**kwargs)
-
-    msg = (f'''
-    Deseja realmente fazer o seguinte reporte?
-    Data: {fechamento['Data']}
-    Responsável: {fechamento['Responsável']}
-    Turno: {fechamento['Turno']}
-    Material: {fechamento['Material']}
-    Entrada: {fechamento['Entrada']}
-    Baia I: {fechamento['Baia I']}
-    Baia II: {fechamento['Baia II']}
-    Baia III: {fechamento['Baia III']}
-    Baia IV: {fechamento['Baia IV']}
-    ''')
-      
-    self.text = msg
-
 
 def confirm():
+  
   for i in dict_Materiais:
     if dict_Materiais[i].active == True:
       fechamento['Material'] = dict_Materiais[i].value
@@ -217,12 +200,60 @@ def confirm():
         if i == compara:
           fechamento[i] = dict_Registro[i].text
 
+  msg = (f'''
+    Deseja realmente fazer o seguinte reporte?
+    Data: {fechamento['Data']}
+    Responsável: {fechamento['Responsavel']}
+    Turno: {fechamento['Turno']}
+    Material: {fechamento['Material']}
+    Entrada: {fechamento['Entrada']}
+    Baia I: {fechamento['Baia I']}
+    Baia II: {fechamento['Baia II']}
+    Baia III: {fechamento['Baia III']}
+    Baia IV: {fechamento['Baia IV']}
+    ''')
+
+
+  
+  dialog = MDDialog(
+    text = msg,
+    buttons = [
+      MDFlatButton(
+        text = 'OK',
+        on_release = lambda *args: send_email(msg)
+      ),
+      MDFlatButton(
+        text = 'Cancelar',
+        on_release = lambda *args: dialog.dismiss()
+              
+      )])
   print(fechamento)
+  dialog.open()
       
-    
+def send_email(content,*args):
+  import smtplib
+  from email.message import EmailMessage
+
+  email = 'testeapplinhaIII@gmail.com'
+  senha = 'qwer1234&'
 
 
-dict_Materiais = {} 
+  
+  msg = EmailMessage()
+
+  msg['SUBJECT'] = 'Reporte Processamento'
+  msg['FROM'] = email
+  msg['TO'] = 'rafaportoilva06@gmail.com'
+  msg.set_content(content)
+
+  with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+    smtp.login(email, senha)
+    smtp.send_message(msg)
+
+
+
+
+dict_Materiais = {}
 dict_Turno = {}
 dict_Registro = {}
 
